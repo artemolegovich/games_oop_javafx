@@ -18,34 +18,23 @@ public class BishopBlack implements Figure {
 
     @Override
     public Cell[] way(Cell dest) {
-        if (isDiagonal(position, dest)) {
-            int size = Math.abs(position.getX() - dest.getX());
-            Cell[] steps = new Cell[size];
-            int deltaX = dest.getX() - position.getX();
-            int deltaY = dest.getY() - position.getY();
-            int x = 1;
-            int y = 1;
-            for (int index = 0; index < size; index++) {
-                if (deltaX < 0 && deltaY < 0) {
-                    steps[index] = Cell.findBy(position.getX() - index - x,
-                            position.getY() - index - y);
-                } else if (deltaX > 0 && deltaY > 0) {
-                    steps[index] = Cell.findBy(position.getX() + index + x,
-                            position.getY() + index + y);
-                } else if (deltaX < 0 && deltaY > 0) {
-                    steps[index] = Cell.findBy(position.getX() - index - x,
-                            position.getY() + index + y);
-                } else if (deltaX > 0 && deltaY < 0) {
-                    steps[index] = Cell.findBy(position.getX() + index + x,
-                            position.getY() - index - y);
-                }
-            }
-            return steps;
-        } else {
+        if (!isDiagonal(position, dest)) {
             throw new ImpossibleMoveException(
                     String.format("Could not way by diagonal from %s to %s", position, dest)
             );
         }
+        int size = Math.abs(position.getX() - dest.getX());
+        Cell[] steps = new Cell[size];
+        int deltaX = dest.getX() - position.getX() > 0 ? 1 : -1;
+        int deltaY = dest.getY() - position.getY() > 0 ? 1 : -1;
+        int x = position.getX();
+        int y = position.getY();
+        for (int index = 0; index < size; index++) {
+            x += deltaX;
+            y += deltaY;
+            steps[index] = Cell.findBy(x, y);
+        }
+        return steps;
     }
 
     public boolean isDiagonal(Cell source, Cell dest) {
